@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 29 09:44:32 2018
+
+@author: manish
+"""
+#1 st method to open url but not open due to 
+#It says that, for some reason, you are not allowed to view this particular page
+
+
+#import urllib.request as url12
+
+#url=("http://bigdataexaminer.com/")
+#
+#page=url12.urlopen(url).read()
+#
+#from bs4 import BeautifulSoup
+#
+#soup1=BeautifulSoup(page,"lxml")
+
+#2nd method to open url not open due to
+#It says that, for some reason, you are not allowed to view this particular pag
+
+#from urllib.request  import urlopen
+#from bs4 import BeautifulSoup
+#
+#url=urlopen("http://bigdataexaminer.com/")
+#
+#set1=BeautifulSoup(url.read(),"lxml")
+
+
+#3rd metod to opn block website
+
+#Definitely it's blocking because of your use of urllib based on the user agent. 
+#This same thing is happening to me with OfferUp. 
+#You can create a new class called AppURLopener which overrides
+ ##the content type present in webpage is mostly utf-8. 
+#Therefore you need to decode web_byte using decode method.
+
+from urllib.request import Request, urlopen
+url="http://bigdataexaminer.com/"
+req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+
+web_byte = urlopen(req).read()
+
+webpage = web_byte.decode('utf-8')
+
+from bs4 import BeautifulSoup
+soup1=BeautifulSoup(webpage,"lxml")
+print(soup1)
+print(soup1.prettify)
+print(soup1.title)
+print(soup1.head.title)
+# .string will return the string present inside the title tag
+print(soup1.head.title.string)
+
+#Descendants lets you iterate over all of a tags children, recursively.
+for child in soup1.head.descendants:
+    print(child)
+
+#use Find_all() to find all the ‘a’ tags on the page.
+soup1.findAll('a')
+
+#To get the first four ‘a’ tags you can use limit attribute.
+
+soup1.findAll('a',limit=5)
+
+#To find a particular text on a web page,
+# you can use text attribute along with find All
+soup1.findAll(text="data")
+
+#Get me the attribute of  the second ‘a’ tag
+soup1.findAll('a')[15].get('href')
+soup1.findAll('a')[5].get('href')
+soup1.findAll('a')[8].get('href')
+
+#You can also use a list comprehension to get the attributes of the first 4 a tags
+a=[i.get('href') for i in soup1.findAll('a',limit=4)]

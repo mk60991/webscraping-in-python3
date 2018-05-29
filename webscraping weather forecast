@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 28 19:37:32 2018
+
+@author: manish
+"""
+
+import urllib.request as url12
+
+url=("https://forecast.weather.gov/MapClick.php?lat=37.7772&lon=-122.4168")
+
+page=url12.urlopen(url)
+
+from bs4 import BeautifulSoup
+
+soup1=BeautifulSoup(page,"lxml")
+print(soup1.title)
+
+seven_day = soup1.find(id="seven-day-forecast")
+
+forecast_items = seven_day.find_all(class_="tombstone-container")
+
+#to extract individual data item
+tonight = forecast_items[0]
+print(tonight.prettify())
+
+period = tonight.find(class_="period-name").get_text()
+short_desc = tonight.find(class_="short-desc").get_text()
+temp = tonight.find(class_="temp").get_text()
+
+print(period)
+print(short_desc)
+print(temp)
+
+img = tonight.find("img")
+desc = img['title']
+
+print(desc)
+
+#to extract all information of webpage 
+
+period_tags = seven_day.select(".tombstone-container .period-name")
+periods = [pt.get_text() for pt in period_tags]
+periods
+
+short_descs = [sd.get_text() for sd in seven_day.select(".tombstone-container .short-desc")]
+temps = [t.get_text() for t in seven_day.select(".tombstone-container .temp")]
+descs = [d["title"] for d in seven_day.select(".tombstone-container img")]
+
+print(short_descs)
+print(temps)
+print(descs)
+
+
+
+#combining our data into dataframe
+import pandas as pd
+weather = pd.DataFrame({
+        "period": periods, 
+        "short_desc": short_descs, 
+        "temp": temps, 
+        "desc":descs
+    })
+weather
+
+df1=pd.DataFrame(weather)
+
+#mean of high and low temperature
+weather["temp_num"].mean()
+
+#pull out numeric temperture values
+temp_nums = weather["temp"].str.extract("(?P<temp_num>\d+)", expand=False)
+weather["temp_num"] = temp_nums.astype('int')
+temp_nums

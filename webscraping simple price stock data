@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 28 23:26:58 2018
+
+@author: manish
+"""
+
+
+import urllib.request as url12
+
+url=("https://www.bloomberg.com/quote/SPX:IND")
+
+page=url12.urlopen(url)
+
+from bs4 import BeautifulSoup
+
+soup1=BeautifulSoup(page,"lxml")
+print(soup1.title)
+
+
+name_box = soup1.find("h1", attrs={"class": 'name'}) #or right_table=soup1.find("h1", class_="name")
+name = name_box.text.strip() # strip() is used to remove starting and trailing
+print (name)
+
+#index price
+price_box = soup1.find("div", attrs={"class":'price'})
+price = price_box.text
+print (price)
+
+import csv
+from datetime import datetime
+#At the bottom of your code, add the code for writing data to a csv file.
+
+# open a csv file with append, so old data will not be erased
+with open('index.csv', 'a') as csv_file:
+ writer = csv.writer(csv_file)
+ writer.writerow([name, price, datetime.now()])
+
+
+# save the data in tuple
+data=[]
+data.append((name, price))
+
+#or
+#right_table=soup1.find("h1", class_="name")
